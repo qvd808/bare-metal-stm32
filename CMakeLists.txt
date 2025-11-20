@@ -34,7 +34,7 @@ set(INCS
     cmsis/core
 )
 
-# Source files (matching your Makefile's SRCS)
+# Source files
 set(SRCS
     src/main.c
     src/startup.c
