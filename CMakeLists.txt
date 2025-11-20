@@ -38,7 +38,9 @@ set(INCS
 # Source files
 set(SRCS
     src/main.c
-    src/startup.c
+    src/stubs.c
+
+	cmsis/device/startup/startup_stm32f446xx.s
 	cmsis/device/source/system_stm32f4xx.c
 )
 

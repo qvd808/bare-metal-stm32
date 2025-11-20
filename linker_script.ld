@@ -3,6 +3,9 @@
 
 ENTRY(Reset_Handler) /* Specifies the program start address */
 
+/* Highest address of the user mode stack */
+_estack = ORIGIN(SRAM) + LENGTH(SRAM);    /* end of RAM */
+
 MEMORY /* define memory regions */
 {
   FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 512K

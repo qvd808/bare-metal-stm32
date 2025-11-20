@@ -1,11 +1,9 @@
 # CMSIS Dependencies Manifest
-# Generated: 2025-11-20 07:15:45 UTC
+# Generated: 2025-11-20 19:33:12 UTC
 # Version: 5.9.0-v2.6.11
 
 [ARM CMSIS Core 5.9.0]
 Repository: https://github.com/ARM-software/CMSIS_5.git
-Reference: 5.9.0
-Destination: /root/Programming/Learning/STM32/bare_metal_f44/cmsis/core
 Files:
   - cmsis_compiler.h
   - cmsis_gcc.h
@@ -13,14 +11,13 @@ Files:
   - core_cm4.h
   - mpu_armv7.h
 
-[STM32F4 Device Support v2.6.11]
+[STM32F4 Device Package v2.6.11]
 Repository: https://github.com/STMicroelectronics/cmsis-device-f4.git
-Reference: v2.6.11
-Destinations:
-  Headers: /root/Programming/Learning/STM32/bare_metal_f44/cmsis/device/include
-  Source: /root/Programming/Learning/STM32/bare_metal_f44/cmsis/device/source
-Files:
+Headers:
   - stm32f4xx.h
   - stm32f446xx.h
   - system_stm32f4xx.h
+Source:
   - system_stm32f4xx.c
+Startup:
+  - startup_stm32f446xx.s
