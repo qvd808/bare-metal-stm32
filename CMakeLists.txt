@@ -71,7 +71,7 @@ add_custom_command(TARGET ${EXECUTABLE}.elf POST_BUILD
     ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}.bin
     COMMENT "Building ${EXECUTABLE}.bin")
 
-# Optional: Flash target (like your Makefile's flash target)
+# Optional: Flash target using OpenOCD
 add_custom_target(flash
     COMMAND openocd -f ${CMAKE_CURRENT_SOURCE_DIR}/dev_board.cfg 
     -c "program ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}.elf verify reset exit"
