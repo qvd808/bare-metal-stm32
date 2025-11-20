@@ -1,3 +1,6 @@
 *.o
 build/
 *.elf
+
+cmsis/.version
+!cmsis/CMSIS_MANIFEST.txt

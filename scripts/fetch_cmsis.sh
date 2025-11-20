@@ -147,8 +147,6 @@ Files:
   - stm32f446xx.h
   - system_stm32f4xx.h
   - system_stm32f4xx.c
-
-To update versions, edit CMSIS5_REF and CMSISF4_REF in this script.
 EOF
 
 echo "[cmsis] Done (${CURRENT_VERSION})"
