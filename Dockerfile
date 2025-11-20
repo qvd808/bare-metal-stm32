@@ -2,11 +2,12 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install build deps + ncurses for gdb
+# Install build deps + cmake + ncurses for gdb
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         wget \
+        cmake \
         make \
         build-essential \
         libncurses5 \
@@ -26,5 +27,5 @@ ENV PATH="/opt/gcc-arm-none-eabi-10.3-2021.10/bin:${PATH}"
 # Work in mounted project directory
 WORKDIR /app
 
-# Default command: build
-CMD ["make"]
+# Default command: configure and build with CMake
+CMD ["sh", "-c", "cmake -B build -S . && cmake --build build"]

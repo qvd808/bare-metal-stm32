@@ -1,0 +1,135 @@
+# ================================
+#  CMSIS Integration (Bare Metal)
+# ================================
+
+[ ] Verify CMSIS directory structure is correct:
+    - cmsis/core/
+    - cmsis/device/include/
+    - cmsis/device/source/
+    - cmsis/.version
+    - cmsis/CMSIS_MANIFEST.txt
+
+[ ] Add CMSIS include paths in Makefile:
+    -Icmsis/core
+    -Icmsis/device/include
+
+[ ] Add system_stm32f4xx.c to Makefile SRCS.
+
+[ ] Ensure startup_stm32f446.s calls SystemInit() before main().
+
+[ ] Confirm SystemCoreClock gets updated correctly inside SystemInit().
+
+[ ] Add a Makefile target:
+    make cmsis → calls scripts/fetch_cmsis.sh
+
+[ ] Add CMSIS fetch step to GitHub Actions workflow.
+
+
+# ================================
+#  UART Setup for printf
+# ================================
+
+[ ] Choose UART peripheral:
+    - Use USART2 (recommended on Nucleo-F446RE)
+
+[ ] Enable peripheral clocks:
+    - RCC->AHB1ENR for GPIOA
+    - RCC->APB1ENR for USART2
+
+[ ] Configure GPIO pins:
+    - PA2 -> USART2_TX (AF7)
+    - PA3 -> USART2_RX (AF7)
+
+[ ] Set GPIO modes:
+    - Alternate function
+    - High speed
+    - Push-pull
+    - No pull-up/pull-down (or as needed)
+
+[ ] Configure USART2:
+    - Baud rate (115200)
+    - Word length = 8 bits
+    - No parity
+    - 1 stop bit
+    - Enable TX (and RX if needed)
+    - Enable USART2 peripheral
+
+[ ] Write "uart_write_char" function:
+    - Wait for TXE flag
+    - Write byte to USART2->DR
+    - Optionally translate '\n' → '\r\n'
+
+[ ] Write "uart_write_buf" function:
+    - Loop over a byte buffer
+    - Send each character via uart_write_char()
+
+
+# ================================
+#  printf Redirection (newlib)
+# ================================
+
+[ ] Identify libc:
+    - Using newlib or newlib-nano?
+
+[ ] Implement _write() syscall:
+    - Called by printf/vfprintf
+    - Handles stdout (fd=1) and stderr (fd=2)
+    - Bridge buffer → uart_write_buf()
+
+[ ] (Optional) Implement minimal syscalls:
+    - _sbrk()  (for heap / malloc)
+    - _close()
+    - _fstat()
+    - _lseek()
+    - _isatty()
+    - _read()
+
+[ ] Add linker option for smaller libc:
+    - --specs=nano.specs (optional)
+    - -u _printf_float (only if float printing needed)
+
+
+# ================================
+#  Testing printf
+# ================================
+
+[ ] Open serial terminal on PC:
+    - /dev/ttyACM0 or COMx
+    - Baud = 115200
+
+[ ] Flash firmware.
+
+[ ] Test simple output:
+    printf("Hello World!\n");
+
+[ ] Verify carriage return behavior (\n vs \r\n).
+
+[ ] Verify SystemCoreClock frequency matches UART timing.
+
+
+# ================================
+#  Enhancements (Optional)
+# ================================
+
+[ ] Create "logger" module wrapping printf for debug builds only.
+
+[ ] Add ITM/SWO printf path for use under debugger.
+
+[ ] Add “fatal error” handler that prints messages over UART.
+
+[ ] Add ring-buffer + interrupt-driven UART TX (advanced).
+
+[ ] Document UART + printf setup in README.
+
+
+# ================================
+#  Final Clean-up
+# ================================
+
+[ ] Ensure startup, linker script, and Makefile are consistent.
+
+[ ] Ensure no leftover .git directories inside cmsis/.
+
+[ ] Commit CMSIS snapshot + version + manifest.
+
+[ ] Tag project with "cmsis-integrated" once printf works.

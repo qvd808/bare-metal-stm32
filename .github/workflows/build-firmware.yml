@@ -21,8 +21,7 @@ jobs:
         run: |
           docker build -t stm32-builder .
 
-      # 3. Run the container to build the firmware
-      #    This will run `make` inside /app, with /app mapped to your repo.
+      # 3. Run the container to build the firmware with CMake
       - name: Build firmware inside container
         run: |
           docker run --rm \
