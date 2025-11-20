@@ -64,7 +64,7 @@ target_link_options(${EXECUTABLE}.elf PRIVATE
     -Wl,--gc-sections
 )
 
-# Generate .bin file from .elf (like your Makefile)
+# Generate .bin file from .elf
 add_custom_command(TARGET ${EXECUTABLE}.elf POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary 
     $<TARGET_FILE:${EXECUTABLE}.elf> 
