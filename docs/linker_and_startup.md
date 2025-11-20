@@ -11,5 +11,5 @@
 - CMSIS start up files also required _estack which points to the top of the stack (ends of SRAM)
 
 ### Weird things recorded for educations purposes?
-- So apparently when linking there's a function __libc_init_array function from the start up which take care of initialized C++ contrucstor ![this link](https://stackoverflow.com/questions/13734745/why-do-i-have-an-undefined-reference-to-init-in-libc-init-array). Therefore, if we are going to use libc, we have to do sth about this
+- So apparently when linking there's a function __libc_init_array function from the start up which take care of initialized C++ contrucstor [this link](https://stackoverflow.com/questions/13734745/why-do-i-have-an-undefined-reference-to-init-in-libc-init-array). Therefore, if we are going to use libc, we have to do sth about this
     - For now, just add a stub libc calls somewhere so the compiler is happy
