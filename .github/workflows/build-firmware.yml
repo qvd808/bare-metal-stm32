@@ -1,0 +1,79 @@
+name: Build STM32 Firmware
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout your repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Build the Docker image defined by your Dockerfile
+      - name: Build stm32-builder image
+        run: |
+          docker build -t stm32-builder .
+
+      # 3. Run the container to build the firmware
+      #    This will run `make` inside /app, with /app mapped to your repo.
+      - name: Build firmware inside container
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/app" \
+            -w /app \
+            stm32-builder
+
+      # 4. Upload build artifacts (ELF + BIN) from ./build
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ github.sha }}
+          path: |
+            build/*.elf
+            build/*.bin
+          if-no-files-found: error
+
+  size:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # 1. Checkout repo (to get the Dockerfile again)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Download the firmware artifact produced by the build job
+      - name: Download firmware artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: firmware-${{ github.sha }}
+          path: build
+
+      # 3. Build the same stm32-builder image (has arm-none-eabi-size)
+      - name: Build stm32-builder image
+        run: |
+          docker build -t stm32-builder .
+
+      # 4. Run arm-none-eabi-size inside the container and write to summary
+      - name: Report firmware size
+        run: |
+          SIZE_OUTPUT=$(docker run --rm \
+            -v "${{ github.workspace }}:/app" \
+            -w /app \
+            stm32-builder \
+            arm-none-eabi-size build/*.elf)
+
+          echo "### Firmware size" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "$SIZE_OUTPUT" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          # Also print to logs
+          echo "$SIZE_OUTPUT"
