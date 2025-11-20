@@ -7,6 +7,7 @@ set(CMAKE_SYSTEM_PROCESSOR ARM)
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
 set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Prevent CMake from testing the compiler
 set(CMAKE_C_COMPILER_WORKS 1)

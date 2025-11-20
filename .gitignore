@@ -4,3 +4,5 @@ build/
 
 cmsis/.version
 !cmsis/CMSIS_MANIFEST.txt
+
+.cache/
