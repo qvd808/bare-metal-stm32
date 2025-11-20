@@ -46,6 +46,9 @@ set(SRCS
 add_executable(${EXECUTABLE}.elf
     ${SRCS})
 
+set_target_properties(${EXECUTABLE}.elf PROPERTIES
+    LINK_DEPENDS ${LINKER_SCRIPT})
+
 # Add header directories
 target_include_directories(${EXECUTABLE}.elf PRIVATE
     ${INCS})
