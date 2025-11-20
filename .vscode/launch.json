@@ -2,18 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug STM32F446RE",
+      "name": "Debug STM32F446RE (external OpenOCD)",
       "type": "cortex-debug",
       "request": "launch",
+
+      "servertype": "external",
+      "gdbTarget": "localhost:3333",
+
       "cwd": "${workspaceFolder}",
       "executable": "${workspaceFolder}/build/blink.elf",
-      "servertype": "openocd",
-      "configFiles": [
-        "${workspaceFolder}/dev_board.cfg"
-      ],
       "gdbPath": "/root/toolchains/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gdb",
+
       "device": "STM32F446RE",
       "svdFile": "${workspaceFolder}/STM32F446.svd",
+
       "runToEntryPoint": "main",
       "preLaunchTask": "Build",
       "showDevDebugOutput": "raw"
