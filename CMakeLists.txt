@@ -56,7 +56,7 @@ target_compile_definitions(${EXECUTABLE}.elf PRIVATE
 target_compile_options(${EXECUTABLE}.elf PRIVATE
     ${CPU_PARAMETERS})
 
-# Linker options (matching your Makefile's LDFLAGS)
+# Linker options: use linker script, no standard startup files, remove unused sections
 target_link_options(${EXECUTABLE}.elf PRIVATE
     ${CPU_PARAMETERS}
     -T${LINKER_SCRIPT}
