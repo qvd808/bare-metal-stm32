@@ -39,6 +39,7 @@ set(INCS
 set(SRCS
     src/main.c
     src/startup.c
+	cmsis/device/source/system_stm32f4xx.c
 )
 
 # Create executable
