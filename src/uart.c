@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "dma.h"
 #include "stm32f446xx.h"
 
 const uint32_t baudrate = 115200;
@@ -39,7 +40,7 @@ void uart_init(void) {
    * https://electronics.stackexchange.com/questions/502135/understanding-calculations-for-baud-rate-fractional-generator-stm32f4
    */
 
-#define USE_OVER8 1 // set to 1 if you want oversampling by 8
+#define USE_OVER8 0 // set to 1 if you want oversampling by 8
 
 #if USE_OVER8
   USART2->CR1 |= USART_CR1_OVER8;
@@ -83,4 +84,69 @@ void read_string(char *buf, uint32_t buf_len) {
     i++;
   }
   buf[i] = '\0';
+}
+
+// Reads a line from the DMA RX circular buffer into buf (up to buf_len-1),
+// stops on '\n' or '\r', null-terminates, and then prints it back.
+void uart_read_string_dma(char *buf, uint32_t buf_len) {
+  static uint32_t last_pos = 0; // last consumed index in dma_rx_buf
+  uint32_t idx = 0;
+
+  for (;;) {
+    // Current write position of DMA:
+    // DMA is in circular mode, NDTR counts down from DMA_RX_BUF_LEN.
+    uint32_t pos = DMA_RX_BUF_LEN - DMA1_Stream5->NDTR; // 0..255
+
+    while (last_pos != pos) {
+      char c = dma_rx_buf[last_pos];
+
+      // Advance last_pos with wrap-around
+      last_pos++;
+      if (last_pos >= DMA_RX_BUF_LEN) {
+        last_pos = 0;
+      }
+
+      // Line termination
+      if (c == '\n' || c == '\r') {
+        buf[idx] = '\0';
+
+        // Print the line back out
+        uart_write_string(buf, idx);
+        uart_write_string("\r\n", 2);
+        return;
+      }
+
+      // Store char into output buffer if space
+      if (idx < buf_len - 1) {
+        buf[idx++] = c;
+      }
+      // If overflow, we just keep discarding extra bytes until newline.
+    }
+
+    // Busy-wait until new data arrives (DMA updates NDTR),
+    // then loop again.
+  }
+}
+
+// Check DMA RX circular buffer for new data and echo any new bytes.
+// Call this often (e.g., in main loop).
+void uart_dma_poll_and_echo(void) {
+  static uint32_t last_pos = 0; // last consumed index in dma_rx_buf
+
+  // Current DMA write index: 0..DMA_RX_BUF_LEN-1
+  uint32_t pos = DMA_RX_BUF_LEN - DMA1_Stream5->NDTR;
+
+  // Process all new bytes that arrived since last_pos
+  while (last_pos != pos) {
+    char c = dma_rx_buf[last_pos];
+
+    // Advance last_pos with wrap-around
+    last_pos++;
+    if (last_pos >= DMA_RX_BUF_LEN) {
+      last_pos = 0;
+    }
+
+    // Echo character back out
+    uart_write_char(c);
+  }
 }

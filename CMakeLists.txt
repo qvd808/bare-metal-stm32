@@ -41,6 +41,7 @@ set(SRCS
     src/main.c
     src/stubs.c
 	src/uart.c
+	src/dma.c
 
 	cmsis/device/startup/startup_stm32f446xx.s
 	cmsis/device/source/system_stm32f4xx.c

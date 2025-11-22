@@ -1,14 +1,14 @@
 /**
  ********************************************************************************
- * @file    ${uart.h}
+ * @file    ${dma.h}
  * @author  ${Quang Vinh Dang}
- * @date    ${November 20th, 2025}
+ * @date    ${November 22th, 2025}
  * @brief   
- * Doing uart stuff
+ * Doing dma stuff
  ********************************************************************************
  */
-#ifndef __UART_H__
-#define __UART_H__
+#ifndef __DMA_H__
+#define __DMA_H__
 
 #include "stdint.h"
 
@@ -23,6 +23,7 @@ extern "C" {
 /************************************
  * MACROS AND DEFINES
  ************************************/
+#define DMA_RX_BUF_LEN 256
 
 /************************************
  * TYPEDEFS
@@ -31,24 +32,17 @@ extern "C" {
 /************************************
  * EXPORTED VARIABLES
  ************************************/
+extern volatile char dma_rx_buf[DMA_RX_BUF_LEN];
 
 /************************************
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
 
-void uart_init(void); 
-void uart_write_char(char c); 
-void uart_write_string(const char *buf, uint32_t len); 
-char uart_read_char(void);
-void read_string(char *buf, uint32_t buf_len);
-
-// DMA related thing
-void uart_read_string_dma(char *buf, uint32_t buf_len);
-void uart_dma_poll_and_echo(void);
+void dma_uart_rx_init(void); 
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__UART_H__
+#endif //__DMA_H__
