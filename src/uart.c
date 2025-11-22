@@ -68,3 +68,19 @@ void uart_write_string(const char *buf, uint32_t len) {
     uart_write_char(buf[i]);
   }
 }
+
+char uart_read_char(void) {
+  while (!(USART2->SR & USART_SR_RXNE))
+    ;
+  char c = USART2->DR;
+  return c;
+}
+
+void read_string(char *buf, uint32_t buf_len) {
+  int i = 0;
+  while (i < buf_len - 1) {
+    buf[i] = uart_read_char();
+    i++;
+  }
+  buf[i] = '\0';
+}
