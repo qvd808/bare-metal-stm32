@@ -39,6 +39,8 @@ extern "C" {
 void uart_init(void); 
 void uart_write_char(char c); 
 void uart_write_string(const char *buf, uint32_t len); 
+char uart_read_char(void);
+void read_string(char *buf, uint32_t buf_len);
 
 
 #ifdef __cplusplus

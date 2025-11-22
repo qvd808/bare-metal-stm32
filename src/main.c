@@ -2,6 +2,7 @@
 #include "system_stm32f4xx.h"
 #include "uart.h"
 #include <stdint.h>
+#include <stdio.h>
 
 #define LED_PIN 5
 
@@ -23,6 +24,7 @@ void main(void) {
     GPIOA->ODR ^= (1 << LED_PIN);
     for (uint32_t i = 0; i < 5000000; i++)
       ; // Simple delay
-    uart_write_string("Hello World\r\n", 13);
+    char c = uart_read_char();
+    uart_write_char(c);
   }
 }
