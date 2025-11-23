@@ -4,8 +4,8 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "make",
-      "args": ["-j4", "all"],
+      "command": "cmake",
+      "args": ["--build", "build", "-j4"],
       "group": {
         "kind": "build",
         "isDefault": true
