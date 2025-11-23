@@ -2,49 +2,40 @@
 #include "drivers/rcc.h"
 #include "stm32f446xx.h"
 
-#define USE_OVER8 0 // set to 1 if you want oversampling by 8
+#define USE_OVER8 0        // set to 1 if you want oversampling by 8
+#define GPIO_MODE_AF 0x2U  // 10b
+#define GPIO_AF7_USART2 7U // AF7
 
 void uart_init(const uart_config_t *cfg) {
+  (void)cfg; // cfg not used if we hardcode pins
+
   rcc_enable_gpioa();
   rcc_enable_usart2();
 
-  // Configure pins as AF
-  uint32_t tx = cfg->tx_pin;
-  uint32_t rx = cfg->rx_pin;
+  /* 1. Configure PA2, PA3 as AF */
+  GPIOA->MODER &= ~(GPIO_MODER_MODE2_Msk | GPIO_MODER_MODE3_Msk);
+  GPIOA->MODER |= (GPIO_MODE_AF << GPIO_MODER_MODE2_Pos) |
+                  (GPIO_MODE_AF << GPIO_MODER_MODE3_Pos);
 
-  GPIOA->MODER &= ~((3U << (tx * 2)) | (3U << (rx * 2)));
-  GPIOA->MODER |= ((2U << (tx * 2)) | (2U << (rx * 2)));
+  /* 2. Select AF7 (USART2) for PA2, PA3 */
+  GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2_Msk | GPIO_AFRL_AFSEL3_Msk);
+  GPIOA->AFR[0] |= (GPIO_AF7_USART2 << GPIO_AFRL_AFSEL2_Pos) |
+                   (GPIO_AF7_USART2 << GPIO_AFRL_AFSEL3_Pos);
 
-  GPIOA->AFR[0] &= ~((0xFU << (tx * 4)) | (0xFU << (rx * 4)));
-  GPIOA->AFR[0] |= ((7U << (tx * 4)) | (7U << (rx * 4)));
-
-  // Configure baud rate
+  /* 3. Configure baud rate */
   uint32_t apb1_clk = rcc_get_apb1_clock();
-
-  /*
-   * USARTDIV = fCK / (16 * baud) (over sampling by 16)
-   *          = fCK / (8 * baud) (over sampling by 8)
-   * div16  = 16 * USARTDIV
-   * in case of over sampling by 16 ~= fCK / baud. We can do more to get better
-   * resolution
-   * Same thing with over sampling by 8
-   * Ref:
-   * https://electronics.stackexchange.com/questions/502135/understanding-calculations-for-baud-rate-fractional-generator-stm32f4
-   */
 
 #if USE_OVER8
   USART2->CR1 |= USART_CR1_OVER8;
-  uint32_t usartdiv =
-      (2 * apb1_clk) / cfg->baudrate; // fixed-point with 4 fractional bits
+  uint32_t usartdiv = (2 * apb1_clk) / cfg->baudrate;
   uint32_t mantissa = usartdiv >> 4;
-  uint32_t fraction = (usartdiv & 0xF) >> 1; // only 3 bits used for OVER8
+  uint32_t fraction = (usartdiv & 0xF) >> 1; // 3 bits used for OVER8
   USART2->BRR = (mantissa << 4) | fraction;
 #else
-  // Oversampling by 16 (default)
   USART2->BRR = apb1_clk / cfg->baudrate;
 #endif
 
-  // Enable USART
+  /* 4. Enable USART2 (TX + RX) */
   USART2->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
 }
 
