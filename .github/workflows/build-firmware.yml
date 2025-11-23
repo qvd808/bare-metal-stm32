@@ -67,12 +67,38 @@ jobs:
             -v "${{ github.workspace }}:/app" \
             -w /app \
             stm32-builder \
-            arm-none-eabi-size build/*.elf)
+            arm-none-eabi-size -A build/*.elf)
 
-          echo "### Firmware size" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "$SIZE_OUTPUT" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # Extract key sizes
+          TEXT=$(echo "$SIZE_OUTPUT" | awk '/\.text/ {print $2}')
+          DATA=$(echo "$SIZE_OUTPUT" | awk '/\.data/ {print $2}')
+          BSS=$(echo "$SIZE_OUTPUT" | awk '/\.bss/ {print $2}')
+          TOTAL=$((TEXT + DATA + BSS))
+
+          FLASH=$((TEXT + DATA))
+          RAM=$((DATA + BSS))
+
+          {
+            echo "## 🚀 Firmware Size Report"
+            echo ""
+            echo "| Section | Size (bytes) | Description |"
+            echo "|---------|--------------|-------------|"
+            echo "| **.text** | $TEXT | Program code (flash) |"
+            echo "| **.data** | $DATA | Init globals (flash → RAM) |"
+            echo "| **.bss**  | $BSS | Zeroed globals (RAM) |"
+            echo "| **Total** | $TOTAL | text + data + bss |"
+            echo ""
+            echo "### 📦 Memory Usage Summary"
+            echo "| Memory | Usage (bytes) | Meaning |"
+            echo "|--------|----------------|---------|"
+            echo "| **Flash** | $FLASH | text + data |"
+            echo "| **RAM** | $RAM | data + bss |"
+            echo ""
+            echo "### Raw Output"
+            echo '```'
+            echo "$SIZE_OUTPUT"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
           # Also print to logs
           echo "$SIZE_OUTPUT"
