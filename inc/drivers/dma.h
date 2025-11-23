@@ -5,7 +5,7 @@
 
 typedef struct {
     volatile uint32_t *peripheral_addr;
-    volatile uint32_t *memory_addr;
+    uint32_t *memory_addr;
     uint32_t           buffer_len;
     uint8_t            channel;      // 0-7
     uint8_t            circular;     // 0 or 1
