@@ -4,6 +4,8 @@
 #include "drivers/uart.h"
 #include "stm32f446xx.h"
 
+static inline void uart_enable_dma_rx(void) { USART2->CR3 |= USART_CR3_DMAR; }
+
 static volatile char rx_buffer[DMA_RX_BUF_LEN];
 static uint32_t last_read_pos = 0;
 

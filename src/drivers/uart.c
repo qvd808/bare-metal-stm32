@@ -35,7 +35,7 @@ void uart_init(const uart_config_t *cfg) {
 #if USE_OVER8
   USART2->CR1 |= USART_CR1_OVER8;
   uint32_t usartdiv =
-      (2 * apb1_clock) / baudrate; // fixed-point with 4 fractional bits
+      (2 * apb1_clk) / cfg->baudrate; // fixed-point with 4 fractional bits
   uint32_t mantissa = usartdiv >> 4;
   uint32_t fraction = (usartdiv & 0xF) >> 1; // only 3 bits used for OVER8
   USART2->BRR = (mantissa << 4) | fraction;
@@ -47,8 +47,6 @@ void uart_init(const uart_config_t *cfg) {
   // Enable USART
   USART2->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
 }
-
-void uart_enable_dma_rx(void) { USART2->CR3 |= USART_CR3_DMAR; }
 
 void uart_write_char(char c) {
   while (!(USART2->SR & USART_SR_TXE))

@@ -1,12 +1,13 @@
 #include "config/board_config.h"
 #include "drivers/rcc.h"
-#include "drivers/uart.h"
 #include "stm32f446xx.h"
 
 #define USE_DMA 1
 
 #if USE_DMA
 #include "hal/uart_dma.h"
+#else
+#include "drivers/uart.h"
 #endif
 
 int main(void) {
@@ -33,6 +34,7 @@ int main(void) {
     } else {
       uart_write_char(c);
     }
+    /* uart_write_string("Hello world\r\n", 13); */
   }
 #endif
 }

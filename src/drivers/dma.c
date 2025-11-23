@@ -2,8 +2,6 @@
 #include "config/board_config.h"
 #include "stm32f446xx.h"
 
-volatile char dma_rx_buf[DMA_RX_BUF_LEN];
-
 void dma1_stream5_init(dma_stream_config_t *cfg) {
   // Enable the DMA1 clock
   RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN;
@@ -31,10 +29,7 @@ void dma1_stream5_init(dma_stream_config_t *cfg) {
   DMA1_Stream5->PAR =
       (uint32_t)cfg->peripheral_addr;              // Source: UART data register
   DMA1_Stream5->M0AR = (uint32_t)cfg->memory_addr; // Destination: memory buffer
-  DMA1_Stream5->NDTR = DMA_RX_BUF_LEN;
-
-  // Enable DMA reception on USART2
-  USART2->CR3 |= USART_CR3_DMAR;
+  DMA1_Stream5->NDTR = cfg->buffer_len;
 
   // Enable DMA stream
   DMA1_Stream5->CR |= DMA_SxCR_EN;

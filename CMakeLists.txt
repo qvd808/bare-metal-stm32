@@ -45,13 +45,12 @@ set(SRCS
 	cmsis/device/startup/startup_stm32f446xx.s
 	cmsis/device/source/system_stm32f4xx.c
 
-    src/main.c
-    src/stubs.c
+	src/main.c
+	src/stubs.c
 
 	src/drivers/uart.c
 	src/drivers/dma.c
 	src/drivers/rcc.c
-
 	src/hal/uart_dma.c
 
 )

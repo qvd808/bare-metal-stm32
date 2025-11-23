@@ -15,7 +15,4 @@ void uart_write_string(const char *buf, uint32_t len);
 char uart_read_char(void);
 void uart_read_string(char *buf, uint32_t buf_len);
 
-// For DMA integration (called by uart_dma module)
-void uart_enable_dma_rx(void);
-
 #endif
