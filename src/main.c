@@ -12,6 +12,7 @@ void main(void) {
 
   // Device erreta 2.2.7 - Delay after an RCC pheripheral clock
   volatile uint32_t tmp = RCC->AHB1ENR;
+  (void)tmp;
 
   // Configure the PA5 pin as output (LED on the Nucleo board)
   GPIOA->MODER |= (1 << 10);  // MODER5[1:0] = 01 (Output)
