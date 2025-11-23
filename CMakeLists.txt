@@ -30,21 +30,30 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g -ffreestanding -fno-builtin -Wall -We
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/linker_script.ld)
 
 # Include directories
-set(INCS
-    cmsis/device/include
-    cmsis/core
-	inc/
+include_directories(
+	inc
+	inc/drivers
+	inc/hal
+	inc/config
+
+	cmsis/core
+	cmsis/device/include
 )
 
 # Source files
 set(SRCS
-    src/main.c
-    src/stubs.c
-	src/uart.c
-	src/dma.c
-
 	cmsis/device/startup/startup_stm32f446xx.s
 	cmsis/device/source/system_stm32f4xx.c
+
+    src/main.c
+    src/stubs.c
+
+	src/drivers/uart.c
+	src/drivers/dma.c
+	src/drivers/rcc.c
+
+	src/hal/uart_dma.c
+
 )
 
 # Create executable

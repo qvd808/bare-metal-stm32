@@ -1,35 +1,38 @@
-#include "dma.h"
-#include "stm32f4xx.h"
-#include "system_stm32f4xx.h"
-#include "uart.h"
-#include <stdint.h>
+#include "config/board_config.h"
+#include "drivers/rcc.h"
+#include "drivers/uart.h"
+#include "stm32f446xx.h"
 
-#define LED_PIN 5
+#define USE_DMA 1
 
-void main(void) {
-  // Enable clock for GPIOA peripheral
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+#if USE_DMA
+#include "hal/uart_dma.h"
+#endif
 
-  // Device erreta 2.2.7 - Delay after an RCC pheripheral clock
-  volatile uint32_t tmp = RCC->AHB1ENR;
-  (void)tmp;
+int main(void) {
+  rcc_enable_gpioa();
 
-  // Configure the PA5 pin as output (LED on the Nucleo board)
-  GPIOA->MODER |= (1 << 10);  // MODER5[1:0] = 01 (Output)
-  GPIOA->MODER &= ~(1 << 11); // Ensure that MODER5[1] is cleared
+  // Configure LED
+  GPIOA->MODER |= (1U << (LED_PIN * 2));
+  GPIOA->MODER &= ~(1U << (LED_PIN * 2 + 1));
 
-  uart_init();
-  /* dma_uart_rx_init(); */
-
-  char line[64];
+#if USE_DMA
+  uart_dma_init();
+  while (1) {
+    uart_dma_poll_and_echo();
+  }
+#else
+  uart_config_t cfg = {
+      .baudrate = UART_BAUDRATE, .tx_pin = UART_TX_PIN, .rx_pin = UART_RX_PIN};
+  uart_init(&cfg);
 
   while (1) {
-    // Toggle the LED
-    /* GPIOA->ODR ^= (1 << LED_PIN); */
-    /* for (uint32_t i = 0; i < 5000000; i++) */
-    ; // Simple delay
-    /* uart_dma_poll_and_echo(); */
     char c = uart_read_char();
-    uart_write_char(c);
+    if (c == '\r' || c == '\n') {
+      uart_write_string("\r\n", 2);
+    } else {
+      uart_write_char(c);
+    }
   }
+#endif
 }
