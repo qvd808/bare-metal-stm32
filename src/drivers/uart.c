@@ -13,7 +13,10 @@ void uart_init(const uart_config_t *cfg) {
   rcc_enable_usart2();
 
   /* 1. Configure PA2, PA3 as AF */
-  GPIOA->MODER &= ~(GPIO_MODER_MODE2_Msk | GPIO_MODER_MODE3_Msk);
+  GPIOA->MODER &=
+      ~(GPIO_MODER_MODE2_Msk |
+        GPIO_MODER_MODE3_Msk); // Need to make this more gneric where it's take
+                               // tx, rx from the argument
   GPIOA->MODER |= (GPIO_MODE_AF << GPIO_MODER_MODE2_Pos) |
                   (GPIO_MODE_AF << GPIO_MODER_MODE3_Pos);
 
