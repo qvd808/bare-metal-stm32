@@ -18,7 +18,7 @@ void uart_dma_init(void) {
                                      (volatile uint32_t *)&USART2->DR,
                                  .memory_addr = (uint32_t *)rx_buffer,
                                  .buffer_len = DMA_RX_BUF_LEN,
-                                 .channel = 4,
+                                 .channel = 4U,
                                  .circular = 1};
   dma1_stream5_init(&dma_cfg);
 

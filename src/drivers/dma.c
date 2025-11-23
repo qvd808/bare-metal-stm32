@@ -18,8 +18,8 @@ void dma1_stream5_init(dma_stream_config_t *cfg) {
   // Start from known state
   DMA1_Stream5->CR = 0;
 
-  // Channel 4 (USART2_RX), memory increment, circular mode, medium priority
-  DMA1_Stream5->CR |= (4U << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC |
+  // memory increment, circular mode, medium priority
+  DMA1_Stream5->CR |= (cfg->channel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC |
                       DMA_SxCR_PL_1 | DMA_SxCR_CIRC;
 
   // 8-bit peripheral & memory, peripheral-to-memory (DIR = 0)
